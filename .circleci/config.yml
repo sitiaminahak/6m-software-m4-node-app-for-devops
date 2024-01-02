@@ -22,7 +22,7 @@ jobs:
       - node/install-packages:
         pkg-manager: npm 
       - run: |
-          echo "Running tests...""
+          echo "Running tests..."
           npm test
   optional_publish:
     #Assignment
