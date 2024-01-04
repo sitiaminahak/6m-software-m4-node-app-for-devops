@@ -38,19 +38,37 @@ jobs:
       - docker/push:
           image: sitiaminahak/education-space
           tag: v1.0.1
-  deploy:
+  # deploy:
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - setup_remote_docker
+  #     - checkout
+  #     - heroku/install
+  #     - run:
+  #         name: Heroku Container Push
+  #         command: |
+  #             heroku container:login
+  #             heroku container:push web -a sitidevops
+  #             heroku container:release web -a sitidevops
+  pull-and-deploy:
     docker:
       - image: cimg/node:16.10
     steps:
       - setup_remote_docker
-      - checkout
       - heroku/install
+      - docker/pull:
+          images: sitiaminahak/education-space:v1.0.1
       - run:
           name: Heroku Container Push
           command: |
               heroku container:login
-              heroku container:push web -a sitidevops
+              docker tag sitiaminahak/education-space:v1.0.1 registry.heroku.com/sitidevops/web
+              # format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
+              docker push registry.heroku.com/sitidevops/web
+              # format --- docker push <registry.heroku.com/<app-name>/web
               heroku container:release web -a sitidevops
+
 
 workflows:
   simple_workflow:
@@ -62,6 +80,6 @@ workflows:
       - publish:
           requires:
             - test
-      - deploy:
+      - pull-and-deploy:
           requires:
             - publish
