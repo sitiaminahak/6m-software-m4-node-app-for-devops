@@ -38,39 +38,38 @@ jobs:
       - docker/push:
           image: sitiaminahak/education-space
           tag: v1.0.1
-  # deploy: # Assignment 4.5
-  #   docker:
-  #     - image: cimg/node:16.10
-  #   steps:
-  #     - setup_remote_docker
-  #     - checkout
-  #     - heroku/install
-  #     - run:
-  #         name: Heroku Container Push
-  #         command: |
-  #             heroku container:login
-  #             heroku container:push web -a sitidevops
-  #             heroku container:release web -a sitidevops
-  pull-and-deploy:
+  deploy: # Assignment 4.5
     docker:
       - image: cimg/node:16.10
     steps:
       - setup_remote_docker
+      - checkout
       - heroku/install
-      - docker/pull:
-          images: sitiaminahak/education-space:v1.0.1
       - run:
           name: Heroku Container Push
           command: |
               heroku container:login
-              docker tag sitiaminahak/education-space:v1.0.1 registry.heroku.com/sitidevops/web
-              # format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
-              docker push registry.heroku.com/sitidevops/web
-              # format --- docker push <registry.heroku.com/<app-name>/web
+              heroku container:push web -a sitidevops
               heroku container:release web -a sitidevops
+  # pull-and-deploy:
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - setup_remote_docker
+  #     - heroku/install
+  #     - docker/pull:
+  #         images: sitiaminahak/education-space:v1.0.1
+  #     - run:
+  #         name: Heroku Container Push
+  #         command: |
+  #             heroku container:login
+  #             docker tag sitiaminahak/education-space:v1.0.1 registry.heroku.com/sitidevops/web
+  #             # format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
+  #             docker push registry.heroku.com/sitidevops/web
+  #             # format --- docker push <registry.heroku.com/<app-name>/web
+  #             heroku container:release web -a sitidevops
 
-
-workflows:
+workflows: # Assignment 4.6
   simple_workflow:
     jobs:
       - build
@@ -80,6 +79,25 @@ workflows:
       - publish:
           requires:
             - test
-      - pull-and-deploy:
+          filters: 
+            branches:
+              ignore: main
+      - deploy:
           requires:
             - publish
+          filters: 
+            branches:
+              ignore: main
+# workflows:
+#   simple_workflow:
+#     jobs:
+#       - build
+#       - test:
+#           requires:
+#             - build
+#       - publish:
+#           requires:
+#             - test
+#       - pull-and-deploy:
+#           requires:
+#             - publish
