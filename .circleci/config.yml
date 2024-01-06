@@ -38,7 +38,7 @@ jobs:
       - docker/push:
           image: sitiaminahak/education-space
           tag: v1.0.1
-  # deploy:
+  # deploy: # Assignment 4.5
   #   docker:
   #     - image: cimg/node:16.10
   #   steps:
