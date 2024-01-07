@@ -34,10 +34,12 @@ jobs:
       - docker/check
       - docker/build:
           image: sitiaminahak/education-space
-          tag: v1.0.1
+          tag: << pipeline.git.tag >>
+          #tag: v1.0.1
       - docker/push:
           image: sitiaminahak/education-space
-          tag: v1.0.1
+          tag: << pipeline.git.tag >>
+          #tag: v1.0.1
   deploy: # Assignment 4.5
     docker:
       - image: cimg/node:16.10
@@ -79,15 +81,20 @@ workflows: # Assignment 4.6
       - publish:
           requires:
             - test
-          filters: 
+          filters:
+            tags:
+              only: /^v.*/
             branches:
               ignore: main
       - deploy:
           requires:
             - publish
-          filters: 
+          filters:
+            tags:
+              only: /^v.*/ 
             branches:
               ignore: main
+
 # workflows:
 #   simple_workflow:
 #     jobs:
