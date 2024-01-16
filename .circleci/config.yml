@@ -38,7 +38,6 @@ jobs:
       - docker/check
       - run: docker build -t $IMAGE_NAME .
       - snyk/scan:
-          severity-threshold: high
           docker-image-name: $IMAGE_NAME
           fail-on-issues: false
   publish:
